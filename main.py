@@ -18,11 +18,15 @@ MAX_CHARS = 400
 def render():
     if not 1 <= len(STORY) <= MAX_CHARS:
         raise ValueError("story outside the 1-400 character gate")
-    if STORY.strip() != STORY or "\n" in STORY:
+    if STORY.strip() != STORY or "\n" in STORY or "\r" in STORY:
         raise ValueError("story must be two sentences with no padding or newline")
     endings = len(re.findall(r"[.!?]+", STORY))
     if endings != 2:
         raise ValueError("story must be exactly two sentences")
+    # Each of the two sentences must carry real words, not just a terminator.
+    parts = [p.strip() for p in re.split(r"[.!?]+", STORY) if p.strip()]
+    if len(parts) != 2:
+        raise ValueError("story must be exactly two non-empty sentences")
     return STORY
 
 
